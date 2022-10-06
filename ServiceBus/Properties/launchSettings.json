@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "ServiceBus": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
