@@ -56,6 +56,7 @@ internal class Program
         builder.Services.AddScoped<ITSContext, TSContext>();
         builder.Services.AddScoped<IEventStore, EventStore>();
         builder.Services.AddScoped<IDomainEventConversionService, DomainEventConversionService>();
+        builder.Services.AddScoped<ICommandValidator, CommandValidator>();
     }
 
     private static void RegisterSQLServerClient(WebApplicationBuilder builder)
