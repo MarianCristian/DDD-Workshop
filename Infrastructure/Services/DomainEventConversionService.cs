@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Text.Json;
 using Common.Messages;
 using Infrastructure.Data.QueryRepository;
+using Newtonsoft.Json;
 
 namespace Infrastructure.Services
 {
@@ -9,7 +9,7 @@ namespace Infrastructure.Services
     {
         public EventStoreTE GetStorageEvent(Guid id, IDomainEvent @event)
         {
-            var payload = JsonSerializer.Serialize(@event);
+            var payload = JsonConvert.SerializeObject(@event);
 
             return new EventStoreTE
             {
@@ -26,7 +26,7 @@ namespace Infrastructure.Services
         {
             var eventType = Type.GetType(eventData.TypeName);
 
-            return (IDomainEvent)JsonSerializer.Deserialize(eventData.Payload, eventType);
+            return (IDomainEvent)JsonConvert.DeserializeObject(eventData.Payload, eventType);
         }
     }
 }

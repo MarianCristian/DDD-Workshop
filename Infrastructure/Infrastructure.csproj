@@ -37,6 +37,7 @@
     <Folder Include="Data\SQL\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AccountManagement\AccountManagement.csproj" />
     <ProjectReference Include="..\Core\Common\Common.csproj" />
   </ItemGroup>
   <ItemGroup>
