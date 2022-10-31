@@ -9,7 +9,8 @@ using Infrastructure.Data.QueryRepository;
 using Azure.Data.Tables;
 using Infrastructure.Data.SQL;
 using Microsoft.EntityFrameworkCore;
-
+using AccountManagement.Events;
+using AccountManagement.EventHandlers;
 
 internal class Program
 {
@@ -57,6 +58,14 @@ internal class Program
         builder.Services.AddScoped<IEventStore, EventStore>();
         builder.Services.AddScoped<IDomainEventConversionService, DomainEventConversionService>();
         builder.Services.AddScoped<ICommandValidator, CommandValidator>();
+
+        builder.Services.AddScoped<IEventHandler<BankAccountRegistered>, BankAccountEventHandler>();
+        builder.Services.AddScoped<IEventHandler<BankAccountRegistered>, NotificationEventHandler>();
+        builder.Services.AddScoped<IEventHandler<TransactionInitiated>, TransactionEventHandler>();
+        builder.Services.AddScoped<IEventHandler<TransactionInitiated>, NotificationEventHandler>();
+        builder.Services.AddScoped<IEventHandler<TransactionInitiated>, BankAccountEventHandler>();
+
+
     }
 
     private static void RegisterSQLServerClient(WebApplicationBuilder builder)
