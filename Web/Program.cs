@@ -11,6 +11,11 @@ using Infrastructure.Data.SQL;
 using Microsoft.EntityFrameworkCore;
 using AccountManagement.Events;
 using AccountManagement.EventHandlers;
+using AccountManagement.Commands;
+using AccountManagement.CommandHandlers;
+using AccountManagement.Queries;
+using AccountManagement.Projections;
+using AccountManagement.QueryHandlers;
 
 internal class Program
 {
@@ -65,7 +70,10 @@ internal class Program
         builder.Services.AddScoped<IEventHandler<TransactionInitiated>, NotificationEventHandler>();
         builder.Services.AddScoped<IEventHandler<TransactionInitiated>, BankAccountEventHandler>();
 
+        builder.Services.AddScoped<IHandleCommand<RegisterBankAccountCommand>, BankAccountCommandHandler>();
+        builder.Services.AddScoped<IHandleCommand<InitiateTransactionCommand>, BankAccountCommandHandler>();
 
+        builder.Services.AddScoped<IHandleQuery<BankAccountQuery, BankAccountProjection>, BankAccountQueryHandler>();
     }
 
     private static void RegisterSQLServerClient(WebApplicationBuilder builder)

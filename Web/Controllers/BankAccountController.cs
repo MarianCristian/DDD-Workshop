@@ -1,5 +1,8 @@
-﻿using AccountManagement.Domain;
+﻿using AccountManagement.Commands;
+using AccountManagement.Domain;
 using AccountManagement.DTO;
+using AccountManagement.Projections;
+using AccountManagement.Queries;
 using Common.Messages;
 using Common.Services;
 using Microsoft.AspNetCore.Http;
@@ -11,44 +14,34 @@ namespace Web.Controllers
     [ApiController]
     public class BankAccountController : ControllerBase
     {
-        private readonly IEventPublisher eventPublisher;
-        private readonly IEventStore eventStore;
+        private readonly ICommandDispatcher commandDispatcher;
+        private readonly IQueryDispatcher queryDispatcher;
 
-        public BankAccountController(IEventPublisher eventPublisher, IEventStore eventStore)
+        public BankAccountController(ICommandDispatcher commandDispatcher, IQueryDispatcher queryDispatcher)
         {
-            this.eventPublisher = eventPublisher;
-            this.eventStore = eventStore;
+            this.commandDispatcher = commandDispatcher;
+            this.queryDispatcher = queryDispatcher;
+        }
+
+        [HttpGet]
+        [Route("api/GetBankAccount")]
+        public BankAccountProjection GetBankAccount(Guid bankAccountId)
+        {
+            return queryDispatcher.Dispatch<BankAccountQuery, BankAccountProjection>(new BankAccountQuery { BankAccountId = bankAccountId});
         }
 
         [HttpPost]
         [Route("api/InitiateTransaction")]
-        public HttpResponse InitiateTransaction(TransactionModel transaction)
+        public HttpResponseMessage InitiateTransaction(InitiateTransactionCommand command)
         {
-            var bankAccount = eventStore.GetById<BankAccount>(transaction.BankAccountId);
-            //Validations
-
-            bankAccount.InititateTransaction(new Transaction(transaction.Amount));
-
-            eventStore.Save(bankAccount);
-
-            bankAccount.PendingEvents.ForEach(e => eventPublisher.Publish(e));
-
-            return null;
+            return commandDispatcher.Dispatch(command);
         }
 
         [HttpPost]
         [Route("api/RegisterBankAccount")]
-        public HttpResponse Register(BankAccountModel bankAccountModel)
+        public HttpResponseMessage Register(RegisterBankAccountCommand command)
         {
-            BankAccount account = new BankAccount();
-
-            account.Register(bankAccountModel);
-
-            eventStore.Save(account);
-
-            account.PendingEvents.ForEach(e => eventPublisher.Publish(e));
-
-            return null;
+            return commandDispatcher.Dispatch(command);
         }
     }
 }
